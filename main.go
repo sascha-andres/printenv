@@ -5,15 +5,22 @@ import (
 	"github.com/sascha-andres/reuse/flag"
 	"golang.org/x/exp/maps"
 	"golang.org/x/exp/slices"
+	"log"
 	"os"
 	"os/exec"
 	"strings"
 )
 
+var verbose bool
+
 func init() {
 	flag.SetEnvPrefix("reuse")
 	flag.SetSeparated()
+	flag.BoolVar(&verbose, "verbose", false, "verbose output")
+	log.SetPrefix("[REUSE] ")
+	log.SetFlags(log.LstdFlags | log.LUTC | log.Lshortfile)
 }
+
 func main() {
 	flag.Parse()
 	separated := flag.GetSeparated()
@@ -43,7 +50,19 @@ func main() {
 		return
 	}
 
-	fmt.Printf("executing separated: %s, %#v\n", separated[0], separated[1:])
+	if verbose {
+		log.Printf("executing separated: %s, %#v", separated[0], separated[1:])
+	}
+
+	verbs := flag.GetVerbs()
+	for _, verb := range verbs {
+		if verbose {
+			log.Printf("verb: %s", verb)
+		}
+		if strings.Contains(verb, "=") {
+			env = append(env, verb)
+		}
+	}
 
 	cmd := exec.Command(separated[0], separated[1:]...)
 	cmd.Env = env
@@ -52,12 +71,10 @@ func main() {
 	cmd.Stderr = os.Stderr
 	err := cmd.Start()
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
 	err = cmd.Wait()
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
 }
