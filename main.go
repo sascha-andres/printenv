@@ -2,22 +2,32 @@ package main
 
 import (
 	"fmt"
-	"github.com/sascha-andres/reuse/flag"
-	"golang.org/x/exp/maps"
-	"golang.org/x/exp/slices"
 	"log"
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/sascha-andres/reuse/flag"
+	"golang.org/x/exp/maps"
+	"golang.org/x/exp/slices"
 )
 
-var verbose bool
+var (
+	verbose, printSecrets bool
+)
+
+// hintsVariableShouldBeSecret contains a list of substrings that suggest a variable should be kept confidential.
+var hintsVariableShouldBeSecret = []string{
+	"password",
+	"token",
+}
 
 func init() {
-	flag.SetEnvPrefix("reuse")
+	flag.SetEnvPrefix("printenv")
 	flag.SetSeparated()
 	flag.BoolVar(&verbose, "verbose", false, "verbose output")
-	log.SetPrefix("[REUSE] ")
+	flag.BoolVar(&printSecrets, "print-secrets", false, "print secrets")
+	log.SetPrefix("[PRINTENV] ")
 	log.SetFlags(log.LstdFlags | log.LUTC | log.Lshortfile)
 }
 
@@ -50,7 +60,11 @@ func main() {
 			return 0
 		})
 		for _, k := range keys {
-			fmt.Printf("%-*s = %s\n", keyLength, k, kv[k])
+			val := kv[k]
+			if !printSecrets && isSecret(k) {
+				val = "<<REDACTED>>"
+			}
+			fmt.Printf("%-*s = %s\n", keyLength, k, val)
 		}
 		return
 	}
@@ -82,4 +96,14 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+// isSecret checks if the provided key contains substrings that suggest it should be treated as confidential.
+func isSecret(k string) bool {
+	for i := range hintsVariableShouldBeSecret {
+		if strings.Contains(strings.ToUpper(k), strings.ToUpper(hintsVariableShouldBeSecret[i])) {
+			return true
+		}
+	}
+	return false
 }
