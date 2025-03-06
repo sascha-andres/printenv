@@ -40,8 +40,14 @@ func main() {
 			}
 		}
 		keys := maps.Keys(kv)
-		slices.SortFunc(keys, func(i, j string) bool {
-			return i < j
+		slices.SortFunc(keys, func(i, j string) int {
+			if i < j {
+				return -1
+			}
+			if i > j {
+				return 1
+			}
+			return 0
 		})
 		for _, k := range keys {
 			fmt.Printf("%-*s = %s\n", keyLength, k, kv[k])
