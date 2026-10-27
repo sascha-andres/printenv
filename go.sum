@@ -1,4 +1,2 @@
-github.com/sascha-andres/reuse v0.7.0 h1:SfQ+ZuXc7HruZ3yz0tDYjKqH1IMs4PoAFj+hayP9R34=
-github.com/sascha-andres/reuse v0.7.0/go.mod h1:qyqrqy/xJOha4jtGO0YobTAbb/xRcjfZ3is8oFZlCgs=
-golang.org/x/exp v0.0.0-20250305212735-054e65f0b394 h1:nDVHiLt8aIbd/VzvPWN6kSOPE7+F/fNFDSXLVYkE/Iw=
-golang.org/x/exp v0.0.0-20250305212735-054e65f0b394/go.mod h1:sIifuuw/Yco/y6yb6+bDNfyeQ/MdPUy/hKEMYQV17cM=
+go.livingit.de/reuse v0.17.1 h1:yn/BEHWWEjHAg5QIL+JLwlQgZPoJ9ld6Z4loUHaY6OI=
+go.livingit.de/reuse v0.17.1/go.mod h1:5x4SamLqvqC/Vl22hfC1FjgCov2ltGlfb6Wn4kXcHFc=

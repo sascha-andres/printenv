@@ -3,13 +3,13 @@ package main
 import (
 	"fmt"
 	"log"
+	"maps"
 	"os"
 	"os/exec"
+	"slices"
 	"strings"
 
-	"github.com/sascha-andres/reuse/flag"
-	"golang.org/x/exp/maps"
-	"golang.org/x/exp/slices"
+	"go.livingit.de/reuse/flag"
 )
 
 var (
@@ -49,16 +49,7 @@ func main() {
 				keyLength = len(b)
 			}
 		}
-		keys := maps.Keys(kv)
-		slices.SortFunc(keys, func(i, j string) int {
-			if i < j {
-				return -1
-			}
-			if i > j {
-				return 1
-			}
-			return 0
-		})
+		keys := slices.Sorted(maps.Keys(kv))
 		for _, k := range keys {
 			val := kv[k]
 			if !printSecrets && isSecret(k) {
